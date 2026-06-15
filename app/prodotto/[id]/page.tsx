@@ -7,11 +7,10 @@ import { notFound } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Thumbs } from "swiper/modules";
+import { Navigation } from "swiper/modules";
 
 import "swiper/css";
 import "swiper/css/navigation";
-import "swiper/css/thumbs";
 
 export default function ProductPage() {
   const params = useParams();
@@ -19,7 +18,7 @@ export default function ProductPage() {
   const [loading, setLoading] = useState(true);
   const [prodotto, setProdotto] = useState<any>(null);
   const [selectedImage, setSelectedImage] = useState(0);
-  const [thumbsSwiper, setThumbsSwiper] = useState<any>(null);
+  const [mainSwiper, setMainSwiper] = useState<any>(null);
 
   useEffect(() => {
     async function loadProduct() {
@@ -59,26 +58,27 @@ export default function ProductPage() {
 
       <main className="bg-white min-h-screen">
 
-        <section className="max-w-6xl mx-auto px-6 py-12">
+        <section className="max-w-6xl mx-auto px-4 md:px-6 py-8 md:py-12">
 
           <p className="text-sm text-gray-400">
             Home / {prodotto.category} / {prodotto.name}
           </p>
 
-          <div className="grid lg:grid-cols-2 gap-12 mt-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mt-8">
 
-           {/* FOTO */}
-
-<div>
+  <div>
 
   {prodotto.images?.length > 0 ? (
 
     <>
 
       <Swiper
-        modules={[Navigation, Thumbs]}
+        modules={[Navigation]}
         navigation
-        thumbs={{ swiper: thumbsSwiper }}
+                onSwiper={setMainSwiper}
+        onSlideChange={(swiper) =>
+          setSelectedImage(swiper.activeIndex)
+        }
         className="rounded-3xl overflow-hidden"
       >
 
@@ -87,18 +87,11 @@ export default function ProductPage() {
 
             <SwiperSlide key={index}>
 
-              <div className="relative h-[500px]">
-
-                <Image
-                  src={image}
-                  alt={`${prodotto.name} ${index + 1}`}
-                  fill
-                  sizes="50vw"
-                  className="object-cover"
-                  priority={index === 0}
-                />
-
-              </div>
+              <img
+                src={image}
+                alt={`${prodotto.name} ${index + 1}`}
+                className="w-full h-[350px] md:h-[500px] object-cover"
+              />
 
             </SwiperSlide>
 
@@ -109,38 +102,37 @@ export default function ProductPage() {
 
       {prodotto.images.length > 1 && (
 
-        <Swiper
-          modules={[Thumbs]}
-          onSwiper={setThumbsSwiper}
-          slidesPerView={4}
-          spaceBetween={16}
-          watchSlidesProgress
-          className="mt-6"
-        >
+        <div className="grid grid-cols-4 gap-4 mt-6">
 
           {prodotto.images.map(
             (image: string, index: number) => (
 
-              <SwiperSlide key={index}>
+              <button
+                key={index}
+                type="button"
+                onClick={() => {
+  setSelectedImage(index);
+  mainSwiper?.slideTo(index);
+}}
+                className={`overflow-hidden rounded-2xl border-2 transition ${
+                  selectedImage === index
+                    ? "border-[#c7a384]"
+                    : "border-transparent"
+                }`}
+              >
 
-                <div className="relative h-24 rounded-2xl overflow-hidden cursor-pointer">
+                <img
+                  src={image}
+                  alt={`${prodotto.name} ${index + 1}`}
+                  className="w-full h-24 object-cover"
+                />
 
-                  <Image
-                    src={image}
-                    alt={`${prodotto.name} ${index + 1}`}
-                    fill
-                    sizes="25vw"
-                    className="object-cover"
-                  />
-
-                </div>
-
-              </SwiperSlide>
+              </button>
 
             )
           )}
 
-        </Swiper>
+        </div>
 
       )}
 
@@ -148,7 +140,7 @@ export default function ProductPage() {
 
   ) : (
 
-    <div className="bg-[#f7f2ec] rounded-3xl h-[500px] flex items-center justify-center text-9xl">
+    <div className="bg-[#f7f2ec] rounded-3xl h-[350px] md:h-[500px] flex items-center justify-center text-9xl">
       👜
     </div>
 
@@ -160,7 +152,7 @@ export default function ProductPage() {
 
             <div>
 
-              <h1 className="text-4xl font-serif">
+              <h1 className="text-3xl md:text-4xl font-serif">
                 {prodotto.name}
               </h1>
 
@@ -169,7 +161,7 @@ export default function ProductPage() {
                   "Nessuna descrizione disponibile."}
               </p>
 
-              <p className="mt-10 text-3xl text-[#b98d63] font-semibold">
+              <p className="mt-8 text-2xl md:text-3xl text-[#b98d63] font-semibold">
 
                 {prodotto.price ||
                   "Contattami per il prezzo"}
@@ -180,7 +172,7 @@ export default function ProductPage() {
                 Disponibile
               </div>
 
-              <div className="mt-10 p-6 border rounded-2xl bg-[#faf7f3]">
+              <div className="mt-8 p-4 md:p-6 border rounded-2xl bg-[#faf7f3]">
 
                 <p className="font-medium">
                   Contattami per maggiori informazioni

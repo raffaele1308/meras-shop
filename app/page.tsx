@@ -87,23 +87,23 @@ export default function Home() {
 
               <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition cursor-pointer">
 
-                <div className="relative h-[300px]">
+                <div className="relative aspect-[16/9]">
 
-                  <Image
-                    src="/category-borse.jpg"
-                    alt="Borse"
-                    fill
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                    className="object-cover"
-                  />
+  <Image
+    src="/category-borse.jpg"
+    alt="Borse"
+    fill
+    sizes="(max-width: 768px) 100vw, 50vw"
+    className="object-cover"
+  />
 
-                </div>
+</div>
 
-                <div className="p-6 text-center">
+                <div className="p-4 text-center">
 
-                  <h3 className="text-3xl font-serif">
-                    BORSE
-                  </h3>
+                  <h3 className="text-2xl font-serif">
+  BORSE
+</h3>
 
                   <p className="mt-2 text-gray-500">
                     Scopri la collezione
@@ -121,7 +121,7 @@ export default function Home() {
 
               <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition cursor-pointer">
 
-                <div className="relative h-[300px]">
+                <div className="relative aspect-[16/9]">
 
                   <Image
                     src="/category-casa.jpg"
@@ -133,11 +133,11 @@ export default function Home() {
 
                 </div>
 
-                <div className="p-6 text-center">
+                <div className="p-4 text-center">
 
-                  <h3 className="text-3xl font-serif">
-                    CASA
-                  </h3>
+                  <h3 className="text-2xl font-serif">
+  CASA
+</h3>
 
                   <p className="mt-2 text-gray-500">
                     Scopri la collezione

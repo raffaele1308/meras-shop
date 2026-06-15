@@ -2,6 +2,7 @@ import Header from "@/components/Header";
 import Link from "next/link";
 import Image from "next/image";
 import { supabase } from "@/lib/supabase";
+import ProductCard from "@/components/ProductCard";
 
 export default async function CasaPage() {
   const { data: prodotti, error } = await supabase
@@ -43,58 +44,10 @@ export default async function CasaPage() {
 
             {prodotti?.map((prodotto) => (
 
-              <Link
-                href={`/prodotto/${prodotto.id}`}
-                key={prodotto.id}
-              >
-
-                <div className="group border rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 cursor-pointer">
-
-                  <div className="relative h-72 overflow-hidden bg-[#f7f2ec]">
-
-                    {prodotto.images?.[0] ? (
-
-                      <Image
-                        src={prodotto.images[0]}
-                        alt={prodotto.name}
-                        fill
-                        sizes="(max-width: 768px) 100vw, 33vw"
-                        className="object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
-
-                    ) : (
-
-                      <div className="h-full flex items-center justify-center">
-
-                        <span className="text-7xl">
-                          🏠
-                        </span>
-
-                      </div>
-
-                    )}
-
-                  </div>
-
-                  <div className="p-6">
-
-                    <h2 className="text-lg font-semibold">
-                      {prodotto.name}
-                    </h2>
-
-                    <p className="mt-4 text-[#b98d63] font-medium">
-
-                      {prodotto.price
-                        ? prodotto.price
-                        : "Contattami per il prezzo"}
-
-                    </p>
-
-                  </div>
-
-                </div>
-
-              </Link>
+             <ProductCard
+  key={prodotto.id}
+  prodotto={prodotto}
+/>
 
             ))}
 

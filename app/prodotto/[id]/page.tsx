@@ -1,23 +1,56 @@
+"use client";
+
 import Header from "@/components/Header";
 import Image from "next/image";
 import { supabase } from "@/lib/supabase";
 import { notFound } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Thumbs } from "swiper/modules";
 
-export default async function ProductPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params;
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/thumbs";
 
-  const { data: prodotto, error } = await supabase
-    .from("products")
-    .select("*")
-    .eq("id", id)
-    .single();
+export default function ProductPage() {
+  const params = useParams();
 
-  if (error || !prodotto) {
-    notFound();
+  const [loading, setLoading] = useState(true);
+  const [prodotto, setProdotto] = useState<any>(null);
+  const [selectedImage, setSelectedImage] = useState(0);
+  const [thumbsSwiper, setThumbsSwiper] = useState<any>(null);
+
+  useEffect(() => {
+    async function loadProduct() {
+      const { data, error } = await supabase
+        .from("products")
+        .select("*")
+        .eq("id", params.id)
+        .single();
+
+      if (error || !data) {
+        notFound();
+        return;
+      }
+
+      setProdotto(data);
+      setLoading(false);
+    }
+
+    loadProduct();
+  }, [params.id]);
+
+  if (loading) {
+    return (
+      <>
+        <Header />
+
+        <main className="bg-white min-h-screen flex items-center justify-center">
+          Caricamento...
+        </main>
+      </>
+    );
   }
 
   return (
@@ -34,63 +67,94 @@ export default async function ProductPage({
 
           <div className="grid lg:grid-cols-2 gap-12 mt-8">
 
-            {/* FOTO */}
+           {/* FOTO */}
 
-            <div>
+<div>
 
-              {prodotto.images?.[0] ? (
+  {prodotto.images?.length > 0 ? (
 
-                <div className="relative rounded-3xl overflow-hidden h-[500px]">
+    <>
+
+      <Swiper
+        modules={[Navigation, Thumbs]}
+        navigation
+        thumbs={{ swiper: thumbsSwiper }}
+        className="rounded-3xl overflow-hidden"
+      >
+
+        {prodotto.images.map(
+          (image: string, index: number) => (
+
+            <SwiperSlide key={index}>
+
+              <div className="relative h-[500px]">
+
+                <Image
+                  src={image}
+                  alt={`${prodotto.name} ${index + 1}`}
+                  fill
+                  sizes="50vw"
+                  className="object-cover"
+                  priority={index === 0}
+                />
+
+              </div>
+
+            </SwiperSlide>
+
+          )
+        )}
+
+      </Swiper>
+
+      {prodotto.images.length > 1 && (
+
+        <Swiper
+          modules={[Thumbs]}
+          onSwiper={setThumbsSwiper}
+          slidesPerView={4}
+          spaceBetween={16}
+          watchSlidesProgress
+          className="mt-6"
+        >
+
+          {prodotto.images.map(
+            (image: string, index: number) => (
+
+              <SwiperSlide key={index}>
+
+                <div className="relative h-24 rounded-2xl overflow-hidden cursor-pointer">
 
                   <Image
-                    src={prodotto.images[0]}
-                    alt={prodotto.name}
+                    src={image}
+                    alt={`${prodotto.name} ${index + 1}`}
                     fill
-                    sizes="50vw"
+                    sizes="25vw"
                     className="object-cover"
-                    priority
                   />
 
                 </div>
 
-              ) : (
+              </SwiperSlide>
 
-                <div className="bg-[#f7f2ec] rounded-3xl h-[500px] flex items-center justify-center text-9xl">
-                  👜
-                </div>
+            )
+          )}
 
-              )}
+        </Swiper>
 
-              {prodotto.images?.length > 1 && (
+      )}
 
-                <div className="grid grid-cols-4 gap-4 mt-6">
+    </>
 
-                  {prodotto.images.map(
-                    (image: string, index: number) => (
+  ) : (
 
-                      <div
-                        key={index}
-                        className="relative h-24 rounded-2xl overflow-hidden"
-                      >
+    <div className="bg-[#f7f2ec] rounded-3xl h-[500px] flex items-center justify-center text-9xl">
+      👜
+    </div>
 
-                        <Image
-                          src={image}
-                          alt={`${prodotto.name} ${index + 1}`}
-                          fill
-                          sizes="25vw"
-                          className="object-cover"
-                        />
+  )}
 
-                      </div>
-
-                    )
-                  )}
-
-                </div>
-
-              )}
-
-            </div>
+</div>
 
             {/* DETTAGLI */}
 
